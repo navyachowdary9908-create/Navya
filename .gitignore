@@ -1,0 +1,37 @@
+# Environment variables (contains API keys - NEVER commit)
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pythonenv*
+
+# Flask
+instance/
+.webassets-cache
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Render
+render-deploy.log
