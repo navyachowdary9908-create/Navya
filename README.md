@@ -1,6 +1,10 @@
-# AI Chatbot
+# AI Chatbot (TypeScript)
 
-A complete web-based AI chatbot built with Python Flask backend and a clean, responsive HTML/CSS/JavaScript frontend. The chatbot uses the **Google Gemini API** for its AI brain.
+A complete web-based AI chatbot built with **TypeScript**, using **Vercel serverless
+functions** for the backend and **Google's Gemini API** for the AI brain.
+
+This is a full migration of an original Python/Flask version into TypeScript, ready
+to deploy to **Vercel** with zero configuration.
 
 ## Features
 
@@ -11,77 +15,144 @@ A complete web-based AI chatbot built with Python Flask backend and a clean, res
 - 🔄 Typing indicator while the AI is responding
 - 🗑️ Clear conversation button
 - 📱 Fully responsive - works on desktop, tablet, and mobile
+- 🧠 Conversation context preserved across messages (history sent from the client)
 
 ## Project Structure
 
 ```
 ai-chatbot/
-├── app.py              # Flask backend with Gemini API integration
-├── requirements.txt    # Python dependencies
-├── .env                # Your API key (create this file)
-├── .env.example        # Template for the .env file
-├── README.md           # This file
-├── templates/
-│   └── index.html      # Frontend HTML
-└── static/
-    ├── style.css       # Frontend styling
-    └── script.js       # Frontend JavaScript logic
+├── api/                  # Vercel serverless functions (TypeScript backend)
+│   ├── chat.ts           # POST /api/chat - sends a message to Gemini
+│   ├── reset.ts          # POST /api/reset - clears the conversation
+│   ├── health.ts         # GET  /api/health - health check / status
+│   └── lib/
+│       └── gemini.ts     # Shared Gemini client + model setup
+├── public/               # Static frontend served at the root
+│   ├── index.html        # Frontend HTML
+│   ├── style.css         # Frontend styling
+│   └── script.js         # Compiled output (generated from src/script.ts)
+├── src/
+│   └── script.ts         # Frontend logic in TypeScript (compiled to public/)
+├── package.json          # Dependencies + build scripts
+├── tsconfig.json         # TypeScript config for the serverless functions
+├── tsconfig.client.json  # TypeScript config for the frontend build
+├── vercel.json           # Vercel build & routing config
+├── .env.example          # Template for environment variables
+└── README.md
 ```
 
-## Setup Instructions
+## Local Development
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) 18 or newer
+- The [Vercel CLI](https://vercel.com/docs/cli)
 
 ### 1. Get a Google Gemini API Key
 
 1. Go to [Google AI Studio](https://aistudio.google.com/)
-2. Sign in with your Google account
-3. Click **"Get API Key"** in the left sidebar
-4. Click **"Create API key"** and copy the generated key
+2. Sign in, then click **"Get API key"** → **"Create API key"**
+3. Copy the generated key
 
-### 2. Configure the API Key
+### 2. Configure the API key
 
-Create a file named `.env` in the `ai-chatbot` directory (or edit the existing one) and add:
+Create a `.env.local` file in the project root (Vercel CLI reads this automatically):
 
 ```
 GEMINI_API_KEY=your_api_key_here
 ```
 
-Replace `your_api_key_here` with your actual API key.
+Or copy the template: `copy .env.example .env.local`
 
-### 3. Install Dependencies
-
-```bash
-cd ai-chatbot
-pip install -r requirements.txt
-```
-
-### 4. Run the Application
+### 3. Install dependencies
 
 ```bash
-python app.py
+npm install
 ```
 
-Then open your browser and go to: **http://127.0.0.1:5000**
+### 4. Run locally
 
-## Usage
+```bash
+npm run dev
+```
 
-- Type your message in the input box and press **Enter** (or click the send button)
-- Press **Shift+Enter** to add a new line in the input
-- Click the **trash icon** in the header to clear the conversation
-- The chatbot will respond using Google's Gemini AI
+`npm run dev` compiles the frontend TypeScript, then starts `vercel dev` so the
+serverless functions and static files run locally. Open **http://localhost:3000**.
+
+## Building the frontend
+
+The frontend lives in TypeScript (`src/script.ts`) and is compiled to `public/script.js`:
+
+```bash
+npm run build
+```
+
+Type-check everything:
+
+```bash
+npm run typecheck
+```
+
+## Deploy to Vercel
+
+### Option 1: Deploy with the Vercel CLI
+
+```bash
+npm i -g vercel
+vercel
+```
+
+Follow the prompts, then:
+
+```bash
+vercel --prod
+```
+
+### Option 2: Deploy from GitHub (recommended)
+
+1. Push this repository to GitHub.
+2. In the [Vercel Dashboard](https://vercel.com/dashboard), click **"Add New"** →
+   **"Project"**.
+3. Import your Git repository. Vercel auto-detects the build command
+   (`npm run build`), output directory (`public`), and the serverless functions
+   in `api/`.
+4. In the project **Settings → Environment Variables**, add:
+
+   | Name            | Value                    |
+   |-----------------|--------------------------|
+   | `GEMINI_API_KEY`| (your actual API key)    |
+   | `GEMINI_MODEL`  | `gemini-1.5-flash` (optional) |
+
+5. Click **"Deploy"**. Vercel builds and deploys automatically.
+6. Your app is live at `https://<your-project>.vercel.app`.
+
+### Notes on the serverless architecture
+
+- Vercel functions are **stateless**. Instead of keeping conversation history in
+  server memory, the frontend stores it locally and sends the last 10 messages
+  with each `/api/chat` request so the model retains context.
+- The API key is read from the `GEMINI_API_KEY` environment variable at runtime.
+  Never commit your real key.
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/` | Serves the chat interface |
-| POST | `/api/chat` | Sends a message to Gemini and returns the response |
+| Method | Endpoint      | Description                             |
+|--------|---------------|-----------------------------------------|
+| GET    | `/`           | Serves the chat interface               |
+| POST   | `/api/chat`   | Sends a message (and history) to Gemini |
+| POST   | `/api/reset`  | Clears the conversation                 |
+| GET    | `/api/health` | Health check / status                   |
 
 ### POST /api/chat
 
 **Request body:**
 ```json
 {
-  "message": "Hello, how are you?"
+  "message": "Hello, how are you?",
+  "history": [
+    { "role": "user", "content": "Hi" },
+    { "role": "model", "content": "Hello! How can I help?" }
+  ]
 }
 ```
 
@@ -92,56 +163,16 @@ Then open your browser and go to: **http://127.0.0.1:5000**
 }
 ```
 
-## Deploy to Render (Free Cloud Hosting)
-
-This project is configured for one-click deployment to [Render](https://render.com).
-
-### Option 1: Deploy via Render Dashboard (Recommended)
-
-1. **Push this code to a GitHub repository** (see instructions below)
-2. Go to [Render.com](https://render.com) and sign up (free tier available)
-3. Click **"New +"** → **"Web Service"**
-4. Connect your GitHub repository
-5. Render will automatically detect the `render.yaml` config and use the correct settings
-6. In the **"Environment"** section, add the environment variable:
-   - **Key:** `GEMINI_API_KEY`
-   - **Value:** `your_actual_gemini_api_key`
-7. Click **"Create Web Service"**
-8. Render will build and deploy your app automatically
-9. Once deployed, you'll get a URL like `https://your-app-name.onrender.com`
-
-### Option 2: Deploy via render.yaml (Blueprint)
-
-The included `render.yaml` file configures:
-- **Service type:** Web Service
-- **Build command:** `pip install -r requirements.txt`
-- **Start command:** `gunicorn app:app`
-- **Runtime:** Python 3.11
-
-### Push Code to GitHub
-
-```bash
-cd ai-chatbot
-git init
-git add .
-git commit -m "Initial commit - AI Chatbot"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/ai-chatbot.git
-git push -u origin main
-```
-
-### Important: API Key on Render
-
-- **Never** commit your real `.env` file (it's in `.gitignore`)
-- Add `GEMINI_API_KEY` as an **environment variable** in Render's dashboard
-- The app reads the key from the environment variable at runtime
-
 ## Troubleshooting
 
-- **"API key not configured"** - Make sure your `.env` file exists and contains a valid `GEMINI_API_KEY`
-- **"Invalid API key"** - Double-check that you copied the API key correctly from Google AI Studio
-- **Port already in use** - Change the port in `app.py` (line: `app.run(debug=True, port=5000)`)
+- **"API key not configured"** - Add the `GEMINI_API_KEY` environment variable in
+  the Vercel dashboard (or `.env.local` locally) and redeploy.
+- **"Invalid API key"** - Double-check that you copied the key correctly from
+  Google AI Studio.
+- **Only the static site loads but `/api/chat` 404s** - Make sure the files are in
+  the `api/` directory at the repo root and committed.
 
 ## License
 
-This project is for educational purposes. Use responsibly and follow Google's [Gemini API Terms of Service](https://ai.google.dev/terms).
+This project is for educational purposes. Use responsibly and follow Google's
+[Gemini API Terms of Service](https://ai.google.dev/terms).

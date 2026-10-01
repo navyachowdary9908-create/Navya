@@ -1,23 +1,28 @@
 # Environment variables (contains API keys - NEVER commit)
 .env
+.env.*.local
+!.env.example
 
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-pythonenv*
+# Dependencies
+node_modules/
 
-# Flask
-instance/
-.webassets-cache
+# Vercel
+.vercel/
+.vercel-output/
+*.vercel.app
+
+# Build output (frontend TypeScript is compiled to public/script.js)
+public/script.js
+public/script.js.map
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# OS
 .DS_Store
+Thumbs.db
 
 # IDE
 .vscode/
@@ -25,13 +30,5 @@ instance/
 *.swp
 *.swo
 
-# OS
-Thumbs.db
-Desktop.ini
-
-# Logs
-*.log
-logs/
-
-# Render
-render-deploy.log
+# Misc
+*.tsbuildinfo

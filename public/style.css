@@ -165,28 +165,25 @@ body {
     border-radius: 12px;
     font-size: 14px;
     line-height: 1.6;
+    white-space: pre-wrap;
     word-wrap: break-word;
 }
 
 .bot-message .message-content {
     background: var(--bot-bg);
     color: var(--text-color);
-    border-top-left-radius: 4px;
-    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
 }
 
 .user-message {
-    flex-direction: row-reverse;
     align-self: flex-end;
+    flex-direction: row-reverse;
 }
 
 .user-message .message-content {
     background: var(--user-bg);
     color: white;
-    border-top-right-radius: 4px;
-    box-shadow: var(--shadow);
 }
-
 /* Typing Indicator */
 .typing-indicator {
     display: flex;
