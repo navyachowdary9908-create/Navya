@@ -17,7 +17,7 @@ Always be polite and professional in your responses.`;
 export const GEMINI_API_KEY: string | undefined = process.env.GEMINI_API_KEY;
 
 export const MODEL_NAME: string =
-  process.env.GEMINI_MODEL || "gemini-3.8-flash";
+  process.env.GEMINI_MODEL || "gemini-3.6-flash";
 
 /** Whether a Gemini API key has been provided. */
 export const apiKeyConfigured: boolean = Boolean(GEMINI_API_KEY);

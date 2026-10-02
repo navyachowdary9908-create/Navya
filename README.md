@@ -121,7 +121,7 @@ vercel --prod
    | Name            | Value                    |
    |-----------------|--------------------------|
    | `GEMINI_API_KEY`| (your actual API key)    |
-   | `GEMINI_MODEL`  | `gemini-3.8-flash` (current default) |
+   | `GEMINI_MODEL`  | `gemini-3.6-flash` (current default) |
 
 5. Click **"Deploy"**. Vercel builds and deploys automatically.
 6. Your app is live at `https://<your-project>.vercel.app`.
