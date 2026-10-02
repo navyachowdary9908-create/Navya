@@ -10,7 +10,7 @@ to deploy to **Vercel** with zero configuration.
 
 - 💬 Real-time chat interface with a modern, responsive design
 - 🤖 Powered by Google's Gemini AI model
-- 🎨 Clean, gradient-based UI with smooth animations
+- 🎨 Clean, professional single-accent UI with subtle animations
 - ⌨️ Enter to send, Shift+Enter for new line
 - 🔄 Typing indicator while the AI is responding
 - 🗑️ Clear conversation button
