@@ -150,7 +150,14 @@ function addMessage(
   rowDiv.appendChild(contentDiv);
   chatMessages.appendChild(rowDiv);
 
-  scrollToBottom();
+  // Always jump straight to a newly sent user message so it is visible
+  // immediately, even if the thread was scrolled up.
+  if (sender === "user") {
+    scrollToBottom();
+  } else {
+    // Assistant replies can be long — scroll smoothly to them.
+    scrollToBottom(true);
+  }
 }
 
 function hideWelcome(): void {
@@ -170,8 +177,20 @@ function hideTypingIndicator(): void {
   typingIndicator.classList.add("hidden");
 }
 
-function scrollToBottom(): void {
-  chatMessages.scrollTop = chatMessages.scrollHeight;
+function scrollToBottom(smooth = false): void {
+  // Wait for the browser to paint the new row before measuring, otherwise
+  // scrollHeight can be stale and the latest message stays out of view.
+  requestAnimationFrame(() => {
+    const last = chatMessages.lastElementChild as HTMLElement | null;
+    if (last) {
+      last.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "end" });
+    } else {
+      chatMessages.scrollTo({
+        top: chatMessages.scrollHeight,
+        behavior: smooth ? "smooth" : "auto",
+      });
+    }
+  });
 }
 
 function setInputState(enabled: boolean): void {
