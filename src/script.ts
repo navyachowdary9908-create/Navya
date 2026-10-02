@@ -43,11 +43,12 @@ sendBtn.addEventListener("click", () => void sendMessage());
 // Reset conversation
 resetBtn.addEventListener("click", () => void resetConversation());
 
-// Quick suggestion chips
-const chips = document.querySelectorAll<HTMLButtonElement>(".chip");
-chips.forEach((chip) => {
-  chip.addEventListener("click", () => {
-    const prompt = chip.dataset.prompt;
+// Quick suggestion cards
+const suggestions =
+  document.querySelectorAll<HTMLButtonElement>(".suggestion");
+suggestions.forEach((card) => {
+  card.addEventListener("click", () => {
+    const prompt = card.dataset.prompt;
     if (prompt) {
       userInput.value = prompt;
       void sendMessage();
@@ -97,7 +98,8 @@ async function sendMessage(): Promise<void> {
     addMessage(
       "Sorry, I encountered an error: " +
         (error instanceof Error ? error.message : String(error)),
-      "bot"
+      "bot",
+      true
     );
   } finally {
     setInputState(true);
@@ -105,35 +107,48 @@ async function sendMessage(): Promise<void> {
   }
 }
 
-function addMessage(text: string, sender: "user" | "bot"): void {
-  const messageDiv = document.createElement("div");
-  messageDiv.className = `message ${sender}-message`;
+function addMessage(
+  text: string,
+  sender: "user" | "bot",
+  isError = false
+): void {
+  const rowDiv = document.createElement("div");
+  rowDiv.className = `row ${sender === "user" ? "user" : "assistant"}${
+    isError ? " error" : ""
+  }`;
 
   const avatarDiv = document.createElement("div");
-  avatarDiv.className = "message-avatar";
+  avatarDiv.className = "row-avatar";
   avatarDiv.setAttribute("aria-hidden", "true");
   avatarDiv.innerHTML =
-    sender === "user" ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
-
-  const bodyDiv = document.createElement("div");
-  bodyDiv.className = "message-body";
+    sender === "user"
+      ? '<i class="fas fa-user"></i>'
+      : '<i class="fas fa-sparkles"></i>';
 
   const contentDiv = document.createElement("div");
-  contentDiv.className = "message-content";
-  contentDiv.textContent = text;
+  contentDiv.className = "row-content";
 
-  const metaSpan = document.createElement("span");
-  metaSpan.className = "message-meta";
+  const labelDiv = document.createElement("div");
+  labelDiv.className = "row-label";
+  labelDiv.textContent = sender === "user" ? "You" : "Assistant";
+
+  const textDiv = document.createElement("div");
+  textDiv.className = "row-text";
+  textDiv.textContent = text;
+
+  const metaSpan = document.createElement("div");
+  metaSpan.className = "row-meta";
   metaSpan.textContent = new Date().toLocaleTimeString([], {
     hour: "numeric",
     minute: "2-digit",
   });
 
-  bodyDiv.appendChild(contentDiv);
-  bodyDiv.appendChild(metaSpan);
-  messageDiv.appendChild(avatarDiv);
-  messageDiv.appendChild(bodyDiv);
-  chatMessages.appendChild(messageDiv);
+  contentDiv.appendChild(labelDiv);
+  contentDiv.appendChild(textDiv);
+  contentDiv.appendChild(metaSpan);
+  rowDiv.appendChild(avatarDiv);
+  rowDiv.appendChild(contentDiv);
+  chatMessages.appendChild(rowDiv);
 
   scrollToBottom();
 }
@@ -186,7 +201,8 @@ async function resetConversation(): Promise<void> {
     addMessage(
       "Failed to reset conversation: " +
         (error instanceof Error ? error.message : String(error)),
-      "bot"
+      "bot",
+      true
     );
   }
 }

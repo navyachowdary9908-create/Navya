@@ -4,74 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Assistant</title>
-    <meta name="description" content="A clean, professional AI chatbot assistant.">
+    <meta name="description" content="A professional AI chat assistant.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <div class="chat-app">
-        <!-- Header -->
-        <header class="chat-header">
-            <div class="brand">
-                <div class="bot-avatar" aria-hidden="true"><i class="fas fa-robot"></i></div>
-                <div class="brand-info">
-                    <h1 class="brand-name">AI Assistant</h1>
-                    <span class="status"><span class="status-dot"></span> Online</span>
+    <div class="app">
+        <!-- Top bar -->
+        <header class="topbar">
+            <div class="topbar-inner">
+                <div class="brand">
+                    <div class="brand-mark" aria-hidden="true"><i class="fas fa-sparkles"></i></div>
+                    <div class="brand-text">
+                        <span class="brand-name">AI Assistant</span>
+                        <span class="model-pill"><span class="live-dot"></span>Gemini 3.6 Flash</span>
+                    </div>
                 </div>
-            </div>
-            <div class="header-actions">
-                <span class="model-badge" title="Current model"><i class="fas fa-microchip"></i> Gemini 3.6 Flash</span>
-                <button id="resetBtn" class="icon-btn" title="Start a new chat" aria-label="Start a new chat">
-                    <i class="fas fa-plus"></i>
+                <button id="resetBtn" class="new-chat-btn" title="Start a new conversation" aria-label="Start a new conversation">
+                    <i class="fas fa-pen-to-square"></i><span>New chat</span>
                 </button>
             </div>
         </header>
 
-        <!-- Conversation -->
-        <main id="chatMessages" class="chat-messages" aria-live="polite">
-            <div id="welcome" class="welcome">
-                <div class="welcome-avatar" aria-hidden="true"><i class="fas fa-robot"></i></div>
-                <h2 class="welcome-title">How can I help you today?</h2>
-                <p class="welcome-sub">Ask me anything — I can explain, write, analyze, and help you get things done.</p>
-                <div class="suggestions">
-                    <button class="chip" data-prompt="Summarize the key benefits of regular exercise">
-                        <i class="fas fa-lightbulb"></i> Summarize benefits of exercise
+        <!-- Conversation thread -->
+        <main id="chatMessages" class="thread" aria-live="polite">
+            <div id="welcome" class="hero">
+                <div class="hero-eyebrow"><i class="fas fa-sparkles"></i> AI Assistant</div>
+                <h1 class="hero-title">What can I help you with?</h1>
+                <p class="hero-sub">Ask anything — get clear, accurate answers written for work.</p>
+                <div class="suggestion-grid">
+                    <button class="suggestion" data-prompt="Summarize the key benefits of regular exercise in 5 bullet points">
+                        <span class="suggestion-icon"><i class="fas fa-list-check"></i></span>
+                        <span class="suggestion-body">
+                            <span class="suggestion-title">Summarize ideas</span>
+                            <span class="suggestion-desc">Turn any topic into clear bullet points</span>
+                        </span>
                     </button>
-                    <button class="chip" data-prompt="Write a professional email to reschedule a meeting">
-                        <i class="fas fa-pen"></i> Draft a reschedule email
+                    <button class="suggestion" data-prompt="Write a concise professional email to reschedule a meeting to next week">
+                        <span class="suggestion-icon"><i class="fas fa-envelope-open-text"></i></span>
+                        <span class="suggestion-body">
+                            <span class="suggestion-title">Draft an email</span>
+                            <span class="suggestion-desc">Polished, professional wording in seconds</span>
+                        </span>
                     </button>
-                    <button class="chip" data-prompt="Explain how the internet works in simple terms">
-                        <i class="fas fa-globe"></i> Explain the internet
+                    <button class="suggestion" data-prompt="Explain how the internet works in simple terms for a non-technical person">
+                        <span class="suggestion-icon"><i class="fas fa-circle-nodes"></i></span>
+                        <span class="suggestion-body">
+                            <span class="suggestion-title">Explain simply</span>
+                            <span class="suggestion-desc">Complex topics made easy to understand</span>
+                        </span>
+                    </button>
+                    <button class="suggestion" data-prompt="Give me 5 practical productivity tips for working from home">
+                        <span class="suggestion-icon"><i class="fas fa-bolt"></i></span>
+                        <span class="suggestion-body">
+                            <span class="suggestion-title">Boost productivity</span>
+                            <span class="suggestion-desc">Actionable tips you can use today</span>
+                        </span>
                     </button>
                 </div>
             </div>
         </main>
 
-        <!-- Typing Indicator -->
-        <div id="typingIndicator" class="typing-indicator hidden" aria-label="Assistant is typing">
-            <div class="message bot-message">
-                <div class="message-avatar"><i class="fas fa-robot"></i></div>
-                <div class="message-body">
-                    <div class="message-content typing">
-                        <div class="typing-dots"><span></span><span></span><span></span></div>
-                    </div>
+        <!-- Typing indicator (assistant row) -->
+        <div id="typingIndicator" class="typing-row hidden" aria-label="Assistant is typing">
+            <div class="thread-inner">
+                <div class="row assistant">
+                    <div class="row-avatar" aria-hidden="true"><i class="fas fa-sparkles"></i></div>
+                    <div class="typing-bubble"><span></span><span></span><span></span></div>
                 </div>
             </div>
         </div>
 
         <!-- Composer -->
-        <footer class="chat-composer">
-            <div class="composer-box">
-                <textarea id="userInput" rows="1" placeholder="Type your message…"
-                    aria-label="Type your message"></textarea>
-                <button id="sendBtn" class="send-btn" title="Send message (Enter)" aria-label="Send message">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+        <footer class="composer-wrap">
+            <div class="composer-inner">
+                <div class="composer">
+                    <textarea id="userInput" rows="1" placeholder="Message AI Assistant…" aria-label="Message AI Assistant"></textarea>
+                    <button id="sendBtn" class="send-btn" title="Send message (Enter)" aria-label="Send message">
+                        <i class="fas fa-arrow-up"></i>
+                    </button>
+                </div>
+                <p class="disclaimer">AI can make mistakes. Verify important information. &nbsp;·&nbsp; <span class="kbd">Enter</span> to send, <span class="kbd">Shift + Enter</span> for a new line</p>
             </div>
-            <p class="composer-hint"><span class="hint-keys">Enter</span> to send &middot; <span class="hint-keys">Shift&nbsp;+&nbsp;Enter</span> for a new line</p>
         </footer>
     </div>
 
