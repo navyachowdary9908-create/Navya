@@ -11,6 +11,7 @@ interface ChatResponse {
 }
 
 const chatMessages = document.getElementById("chatMessages") as HTMLDivElement;
+const welcome = document.getElementById("welcome") as HTMLDivElement;
 const userInput = document.getElementById("userInput") as HTMLTextAreaElement;
 const sendBtn = document.getElementById("sendBtn") as HTMLButtonElement;
 const resetBtn = document.getElementById("resetBtn") as HTMLButtonElement;
@@ -42,9 +43,23 @@ sendBtn.addEventListener("click", () => void sendMessage());
 // Reset conversation
 resetBtn.addEventListener("click", () => void resetConversation());
 
+// Quick suggestion chips
+const chips = document.querySelectorAll<HTMLButtonElement>(".chip");
+chips.forEach((chip) => {
+  chip.addEventListener("click", () => {
+    const prompt = chip.dataset.prompt;
+    if (prompt) {
+      userInput.value = prompt;
+      void sendMessage();
+    }
+  });
+});
+
 async function sendMessage(): Promise<void> {
   const message = userInput.value.trim();
   if (!message) return;
+
+  hideWelcome();
 
   userInput.value = "";
   userInput.style.height = "auto";
@@ -96,17 +111,39 @@ function addMessage(text: string, sender: "user" | "bot"): void {
 
   const avatarDiv = document.createElement("div");
   avatarDiv.className = "message-avatar";
-  avatarDiv.textContent = sender === "user" ? "👤" : "🤖";
+  avatarDiv.setAttribute("aria-hidden", "true");
+  avatarDiv.innerHTML =
+    sender === "user" ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+
+  const bodyDiv = document.createElement("div");
+  bodyDiv.className = "message-body";
 
   const contentDiv = document.createElement("div");
   contentDiv.className = "message-content";
   contentDiv.textContent = text;
 
+  const metaSpan = document.createElement("span");
+  metaSpan.className = "message-meta";
+  metaSpan.textContent = new Date().toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+
+  bodyDiv.appendChild(contentDiv);
+  bodyDiv.appendChild(metaSpan);
   messageDiv.appendChild(avatarDiv);
-  messageDiv.appendChild(contentDiv);
+  messageDiv.appendChild(bodyDiv);
   chatMessages.appendChild(messageDiv);
 
   scrollToBottom();
+}
+
+function hideWelcome(): void {
+  welcome.classList.add("hidden");
+}
+
+function showWelcome(): void {
+  welcome.classList.remove("hidden");
 }
 
 function showTypingIndicator(): void {
@@ -136,8 +173,15 @@ async function resetConversation(): Promise<void> {
     }
 
     conversationHistory = [];
-    chatMessages.innerHTML = "";
-    addMessage("Hello! I'm your AI assistant. How can I help you today?", "bot");
+    // Clear messages while keeping the welcome element in the DOM.
+    for (let i = chatMessages.children.length - 1; i >= 0; i--) {
+      const child = chatMessages.children[i];
+      if (child !== welcome) {
+        chatMessages.removeChild(child);
+      }
+    }
+    showWelcome();
+    hideTypingIndicator();
   } catch (error) {
     addMessage(
       "Failed to reset conversation: " +
