@@ -2,8 +2,7 @@
 
 Professional single-page portfolio for **Navateja Kakani, SAP Basis Consultant (HANA / S/4HANA / Production Support)**.
 
-**Stack:** HTML5 + CSS3 + vanilla JavaScript — no framework, no build step.
-Inspired by top SAP consultant sites (fabiankehlenbeck.de, sanerdemirel.com, markus-mildner.com) + modern portfolio best practices: sticky nav, hero + stats, skills grid, experience timeline, expertise accordions, cloud section, contact form, responsive + print-to-PDF résumé.
+**Stack:** HTML5 + CSS3 + vanilla JavaScript + Font Awesome icons + Google Fonts. No framework, no build step.
 
 ## Run locally
 Just open `index.html` in a browser, or:
@@ -13,11 +12,15 @@ npx serve "nava protfolio"
 python -m http.server 8000
 ```
 
-## Deploy
-- **GitHub Pages:** repo Settings → Pages → Deploy from branch → `main` → folder `/nava protfolio` (or `/` if moved to root).
-- **Vercel:** import repo, framework = Other, output = `nava protfolio`.
+## Deploy free (professional links)
+- **GitHub Pages:** push repo → Settings → Pages → Deploy from branch → `main` → `/root`
+- **Vercel / Netlify:** import repo, no build command, output = portfolio folder
+- **Custom domain:** add a domain (e.g. navatejakakani.com) for a recruiter-ready URL
 
 ## Files
-- `index.html` — content + SEO meta
-- `styles.css` — theme (SAP blue #0A6ED1, navy, gold), responsive, print styles
-- `script.js` — nav, reveal, counters, filters, accordions, mailto form
+- `index.html` — hero, about, skills, experience, expertise, cloud, contact
+- `styles.css` — SAP blue theme, dark mode, responsive, print-to-PDF resume
+- `script.js` — nav, progress bar, reveal, counters, filters, accordions, theme, mailto form
+
+## Edit LinkedIn URL
+Replace `https://www.linkedin.com/in/navateja-kakani` in `index.html` (2 places) with the real profile URL.

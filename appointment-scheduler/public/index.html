@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Scheduler</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:,">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="logo-icon">&#128222;</span>
+                <span class="logo-text">Appointment Scheduler</span>
+            </div>
+
+    <!-- Modal: New/Edit Appointment -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">New Appointment</h2>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <form id="appointmentForm">
+                <input type="hidden" id="appointmentId">
+                <div class="form-group">
+                    <label for="title">Title *</label>
+                    <input type="text" id="title" required placeholder="e.g. Team Meeting">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="start_time">Start Time *</label>
+                        <input type="datetime-local" id="start_time" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="end_time">End Time *</label>
+                        <input type="datetime-local" id="end_time" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" rows="3" placeholder="Brief description..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="user_id">User ID</label>
+                        <input type="text" id="user_id" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="color">Color</label>
+                        <input type="color" id="color" value="#4f46e5">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status">
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="modalCancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="modalSubmit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteOverlay">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h2>Confirm Delete</h2>
+                <button class="modal-close" id="deleteCancel">&times;</button>
+            </div>
+            <p class="modal-message">Are you sure you want to delete this appointment? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="deleteCancelBtn">Cancel</button>
+                <button class="btn btn-danger" id="deleteConfirm">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="app.js"></script>
+</html>
+
+            <div class="nav-links">
+                <a href="#dashboard" class="nav-link active">Dashboard</a>
+                <a href="#new" class="nav-link">New</a>
+                <a href="#about" class="nav-link">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="container">
+        <header class="page-header">
+            <h1>Appointment Scheduler</h1>
+            <p class="subtitle">Manage your appointments and bookings efficiently</p>
+        </header>
+
+        <section class="filters" id="filters">
+            <div class="filter-group">
+                <input type="text" id="searchInput" class="input-field" placeholder="Search appointments...">
+            </div>
+            <div class="filter-group">
+                <select id="statusFilter" class="input-field">
+                    <option value="">All Status</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="pending">Pending</option>
+                    <option value="cancelled">Cancelled</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="appointment-list" id="appointmentList">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Loading appointments...</p>
+            </div>
+            <div class="empty-state" id="emptyState">
+                <div class="empty-icon">&#128228;</div>
+                <h3>No appointments found</h3>
+                <p>Schedule your first appointment to get started.</p>
+            </div>
+            <div class="appointments-grid" id="appointmentsGrid"></div>
+        </section>
+
+        <button class="fab" id="fab" aria-label="New Appointment">
+            <span class="fab-icon">+</span>
+        </button>
+    </main>
+</body>
+</html>
